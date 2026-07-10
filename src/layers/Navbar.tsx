@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, Search, Menu, X, LogOut, User as UserIcon } from "lucide-react";
+import { Bell, Menu, X, LogOut, User as UserIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authClient, useSession } from "@/lib/auth-client";
 
@@ -92,17 +92,12 @@ export default function Navbar() {
 
             {/* রাইট অ্যাকশন বাটন (ডেস্কটপ) */}
             <div className="hidden md:flex items-center gap-4">
-                <button
-                    aria-label="Search"
-                    className="text-gray-400 hover:text-white transition-colors"
-                >
-                    <Search size={18} />
-                </button>
+                {/* সার্চ বাটন রিমুভ করা হয়েছে */}
 
                 {isLoggedIn && (
                     <button
                         aria-label="Notifications"
-                        className="relative p-1.5 text-gray-400 hover:text-white bg-[#0d0e1a] border border-gray-900 rounded-lg"
+                        className="relative p-1.5 text-gray-400 hover:text-white bg-[#0d0e1a] border border-gray-900 rounded-lg mr-1"
                     >
                         <Bell size={16} />
                         <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#5D3EBC] rounded-full"></span>
@@ -110,7 +105,7 @@ export default function Navbar() {
                 )}
 
                 {isPending ? (
-                    // সেশন লোড হওয়ার সময় স্কেলিটন
+                    // সেশন লোড হওয়ার সময় স্কেলিতন
                     <div className="flex items-center gap-2 bg-[#0d0e1a] border border-gray-900 pr-3 pl-1.5 py-1 rounded-xl animate-pulse">
                         <div className="w-6 h-6 rounded-full bg-gray-800" />
                         <div className="w-16 h-3 rounded bg-gray-800" />
@@ -127,7 +122,6 @@ export default function Navbar() {
                                     alt={userName}
                                     className="w-6 h-6 rounded-full object-cover"
                                     onError={(e) => {
-                                        // ইমেজ লোড ফেইল করলে ফলব্যাক ইনিশিয়াল দেখায়
                                         (e.target as HTMLImageElement).style.display = "none";
                                     }}
                                 />
@@ -169,12 +163,21 @@ export default function Navbar() {
                         </AnimatePresence>
                     </div>
                 ) : (
-                    <Link
-                        href="/login"
-                        className="bg-[#5D3EBC] hover:bg-[#5D3EBC]/90 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors"
-                    >
-                        Login
-                    </Link>
+                    // লগআউট অবস্থায় ডেডিকেটেড লগইন এবং রেজিস্টার লিংক
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/login"
+                            className="text-xs font-semibold text-gray-400 hover:text-white transition-colors px-2 py-1"
+                        >
+                            Login
+                        </Link>
+                        <Link
+                            href="/register"
+                            className="bg-[#5D3EBC] hover:bg-[#5D3EBC]/90 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-[0_0_15px_rgba(93,62,188,0.2)]"
+                        >
+                            Register
+                        </Link>
+                    </div>
                 )}
             </div>
 
@@ -243,13 +246,23 @@ export default function Navbar() {
                                 </button>
                             </>
                         ) : (
-                            <Link
-                                href="/login"
-                                onClick={() => setIsOpen(false)}
-                                className="bg-[#5D3EBC] text-white text-sm font-bold text-center py-2.5 rounded-xl"
-                            >
-                                Login
-                            </Link>
+                            // মোবাইল ড্রপডাউনে লগইন এবং রেজিস্টার বাটন
+                            <div className="grid grid-cols-2 gap-2 pt-1">
+                                <Link
+                                    href="/login"
+                                    onClick={() => setIsOpen(false)}
+                                    className="border border-gray-800 text-gray-300 text-sm font-semibold text-center py-2 rounded-xl hover:bg-[#0d0e1a]"
+                                >
+                                    Login
+                                </Link>
+                                <Link
+                                    href="/register"
+                                    onClick={() => setIsOpen(false)}
+                                    className="bg-[#5D3EBC] text-white text-sm font-bold text-center py-2 rounded-xl shadow-[0_0_15px_rgba(93,62,188,0.1)]"
+                                >
+                                    Register
+                                </Link>
+                            </div>
                         )}
                     </motion.div>
                 )}
