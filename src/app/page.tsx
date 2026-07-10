@@ -1,14 +1,20 @@
 import Footer from "@/layers/Footer";
 import HeroBanner from "@/layers/Hero";
+import TagMarquee from "@/layers/MarqueeCom";
+import TrendingCreators from "@/layers/TrendingCreators";
 import TrendingGrid from "@/layers/TrendingPosts";
+import WhyCircleX from "@/layers/WhyCircleX";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <div>
-     <HeroBanner></HeroBanner>
-     <TrendingGrid></TrendingGrid>
-     <Footer></Footer>
+      <HeroBanner></HeroBanner>
+      <TrendingGrid></TrendingGrid>
+      <TagMarquee></TagMarquee>
+      <TrendingCreators></TrendingCreators>
+      <WhyCircleX></WhyCircleX>
+      <Footer></Footer>
     </div>
   );
 }
