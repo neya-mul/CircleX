@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { ArrowDown, ArrowRight, Heart, MessageCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -30,6 +31,19 @@ const STACK_AVATARS = [
 ];
 
 export default function HeroBanner() {
+    const heroRef = useRef<HTMLDivElement>(null);
+    const [spotlight, setSpotlight] = useState({ x: 50, y: 50, active: false });
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = heroRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        setSpotlight({
+            x: ((e.clientX - rect.left) / rect.width) * 100,
+            y: ((e.clientY - rect.top) / rect.height) * 100,
+            active: true,
+        });
+    };
+
     const scrollToNextSection = () => {
         window.scrollTo({
             top: window.innerHeight * 0.68,
@@ -39,19 +53,45 @@ export default function HeroBanner() {
 
     return (
         // শর্ত ১: Height limited to 60–70% of the screen (h-[65vh])
-        <div className="w-full h-[65vh] bg-[#06060e] overflow-hidden flex items-center px-6 sm:px-16 border-b border-[#161624] relative">
-            {/* 🔮 ব্যাকগ্রাউন্ডে মোশন রিং অ্যানিমেশন — subtle, tucked in the corner, not behind the card */}
+        <div
+            ref={heroRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setSpotlight((s) => ({ ...s, active: false }))}
+            className="w-full h-[65vh] bg-[#06060e] overflow-hidden flex items-center px-6 sm:px-16 border-b border-[#161624] relative"
+        >
+            {/* 📐 বেস ডট-গ্রিড টেক্সচার (সবসময় অতি হালকা দৃশ্যমান) */}
+            <div
+                className="absolute inset-0 pointer-events-none opacity-[0.15]"
+                style={{
+                    backgroundImage: "radial-gradient(circle, #6366F1 1px, transparent 1px)",
+                    backgroundSize: "28px 28px",
+                }}
+            />
+
+            {/* ✨ সিগনেচার: কার্সার-রিঅ্যাকটিভ স্পটলাইট — গ্রিডকে জীবন্ত করে তোলে */}
+            <div
+                className="absolute inset-0 pointer-events-none transition-opacity duration-500"
+                style={{
+                    opacity: spotlight.active ? 1 : 0,
+                    background: `radial-gradient(320px circle at ${spotlight.x}% ${spotlight.y}%, rgba(99,102,241,0.14), transparent 70%)`,
+                }}
+            />
+            <div
+                className="absolute inset-0 pointer-events-none transition-opacity duration-500"
+                style={{
+                    opacity: spotlight.active ? 0.5 : 0,
+                    backgroundImage: "radial-gradient(circle, #a78bfa 1px, transparent 1px)",
+                    backgroundSize: "28px 28px",
+                    WebkitMaskImage: `radial-gradient(220px circle at ${spotlight.x}% ${spotlight.y}%, black, transparent 70%)`,
+                    maskImage: `radial-gradient(220px circle at ${spotlight.x}% ${spotlight.y}%, black, transparent 70%)`,
+                }}
+            />
+
+            {/* 🔮 অ্যাম্বিয়েন্ট গ্লো — quiet, tucked in the corner */}
             <motion.div
                 className="absolute right-[-15%] top-[-15%] w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full border border-[#5D3EBC]/15 pointer-events-none"
-                animate={{
-                    scale: [1, 1.05, 1],
-                    rotate: 360,
-                }}
-                transition={{
-                    duration: 25,
-                    repeat: Infinity,
-                    ease: "linear",
-                }}
+                animate={{ scale: [1, 1.05, 1], rotate: 360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
             />
             <div className="absolute left-[15%] top-1/4 w-32 h-32 bg-[#6366F1]/10 blur-[80px] pointer-events-none" />
 
@@ -65,7 +105,7 @@ export default function HeroBanner() {
                         className="inline-flex items-center gap-1.5 bg-[#12112a] border border-[#5D3EBC]/40 px-3 py-1 rounded-full text-[10px] font-bold text-[#9295ff] tracking-wider uppercase shadow-[0_0_15px_rgba(93,62,188,0.2)]"
                     >
                         <Sparkles size={10} />
-                        3,200 posts today
+                        <span className="tabular-nums">3,200</span> posts today
                     </motion.div>
 
                     <div className="space-y-4">
@@ -76,7 +116,13 @@ export default function HeroBanner() {
                             className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.1]"
                         >
                             Your circle is <br />
-                            <span className="bg-gradient-to-r from-[#6366F1] via-[#a78bfa] to-white bg-clip-text text-transparent">
+                            <span
+                                className="bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_6s_linear_infinite]"
+                                style={{
+                                    backgroundImage:
+                                        "linear-gradient(90deg, #6366F1, #a78bfa, #ffffff, #a78bfa, #6366F1)",
+                                }}
+                            >
                                 already here.
                             </span>
                         </motion.h1>
@@ -102,10 +148,11 @@ export default function HeroBanner() {
                         <motion.button
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.98 }}
-                            className="group bg-[#5D3EBC] hover:bg-[#5D3EBC]/90 text-white text-xs font-bold px-6 py-3.5 rounded-xl flex items-center gap-2 shadow-[0_0_20px_rgba(93,62,188,0.4)] transition-all"
+                            className="group relative overflow-hidden bg-[#5D3EBC] hover:bg-[#5D3EBC]/90 text-white text-xs font-bold px-6 py-3.5 rounded-xl flex items-center gap-2 shadow-[0_0_20px_rgba(93,62,188,0.4)] transition-all"
                         >
-                            Join the Feed
-                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                            <span className="relative">Join the Feed</span>
+                            <ArrowRight size={14} className="relative group-hover:translate-x-1 transition-transform" />
                         </motion.button>
 
                         <motion.button
@@ -125,38 +172,50 @@ export default function HeroBanner() {
                     >
                         <div className="flex -space-x-2.5">
                             {STACK_AVATARS.map((src, i) => (
-                                <img
+                                <motion.img
                                     key={i}
                                     src={src}
                                     alt=""
-                                    className="w-7 h-7 rounded-full object-cover border-2 border-[#06060e]"
+                                    whileHover={{ y: -3, zIndex: 10 }}
+                                    className="w-7 h-7 rounded-full object-cover border-2 border-[#06060e] relative"
                                 />
                             ))}
                             <div className="w-7 h-7 rounded-full bg-[#161624] border-2 border-[#06060e] flex items-center justify-center text-[8px] font-bold text-gray-400">
                                 +12k
                             </div>
                         </div>
-                        <span className="text-[11px] text-gray-500">
-                            already posting this week
-                        </span>
+                        <span className="text-[11px] text-gray-500">already posting this week</span>
                     </motion.div>
                 </div>
 
-                {/* 📱 ডান পাশ: লাইভ ফিড প্রিভিউ কার্ড — সিগনেচার এলিমেন্ট */}
+                {/* 📱 ডান পাশ: লাইভ ফিড প্রিভিউ কার্ড — bobbing, glowing border */}
                 <motion.div
                     initial={{ opacity: 0, y: 30, rotate: -2 }}
-                    animate={{ opacity: 1, y: 0, rotate: -2 }}
-                    transition={{ delay: 0.4, duration: 0.7 }}
+                    animate={{
+                        opacity: 1,
+                        rotate: -2,
+                        y: [0, -8, 0],
+                    }}
+                    transition={{
+                        opacity: { delay: 0.4, duration: 0.7 },
+                        y: { delay: 1, duration: 4.5, repeat: Infinity, ease: "easeInOut" },
+                    }}
                     whileHover={{ rotate: 0, scale: 1.02 }}
                     className="hidden md:block relative w-full max-w-[280px] shrink-0"
                 >
-                    <div className="w-full bg-[#0b0c16]/90 backdrop-blur-md border border-[#161624] rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.5)] space-y-3">
+                    {/* গ্রেডিয়েন্ট গ্লো বর্ডার */}
+                    <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-[#6366F1]/40 via-transparent to-[#5D3EBC]/40 blur-[2px] pointer-events-none" />
+
+                    <div className="relative w-full bg-[#0b0c16]/95 backdrop-blur-md border border-[#161624] rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.55)] space-y-3">
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
                                 Live on your feed
                             </span>
-                            <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-400">
-                                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                            <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-400">
+                                <span className="relative flex h-1.5 w-1.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                                </span>
                                 Live
                             </span>
                         </div>
@@ -167,7 +226,8 @@ export default function HeroBanner() {
                                 initial={{ opacity: 0, x: 15 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.7 + i * 0.15, duration: 0.5 }}
-                                className="bg-[#06060e] border border-[#161624] rounded-xl p-3 space-y-2"
+                                whileHover={{ borderColor: "rgba(99,102,241,0.4)" }}
+                                className="bg-[#06060e] border border-[#161624] rounded-xl p-3 space-y-2 transition-colors"
                             >
                                 <div className="flex items-center gap-2">
                                     <img
@@ -198,7 +258,7 @@ export default function HeroBanner() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 1.1, duration: 0.4 }}
-                        className="absolute -top-3 -left-3 bg-[#5D3EBC] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(93,62,188,0.5)]"
+                        className="absolute -top-3 -left-3 bg-[#5D3EBC] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(93,62,188,0.5)] z-10"
                     >
                         🔥 Trending now
                     </motion.div>
@@ -215,6 +275,14 @@ export default function HeroBanner() {
                     <ArrowDown size={12} className="animate-bounce text-gray-600 group-hover:text-[#6366F1]" />
                 </button>
             </div>
+
+            <style jsx>{`
+                @keyframes shimmer {
+                    to {
+                        background-position: 200% center;
+                    }
+                }
+            `}</style>
         </div>
     );
 }

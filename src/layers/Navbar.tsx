@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, Menu, X, LogOut, User as UserIcon } from "lucide-react";
+import {  Menu, X, LogOut, User as UserIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authClient, useSession } from "@/lib/auth-client";
 
@@ -94,7 +94,7 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-4">
                 {/* সার্চ বাটন রিমুভ করা হয়েছে */}
 
-                {isLoggedIn && (
+                {/* {isLoggedIn && (
                     <button
                         aria-label="Notifications"
                         className="relative p-1.5 text-gray-400 hover:text-white bg-[#0d0e1a] border border-gray-900 rounded-lg mr-1"
@@ -102,7 +102,7 @@ export default function Navbar() {
                         <Bell size={16} />
                         <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#5D3EBC] rounded-full"></span>
                     </button>
-                )}
+                )} */}
 
                 {isPending ? (
                     // সেশন লোড হওয়ার সময় স্কেলিতন
