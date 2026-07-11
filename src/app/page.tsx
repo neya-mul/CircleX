@@ -10,8 +10,9 @@ export default function Home() {
   return (
     <div>
       <HeroBanner></HeroBanner>
-      <TrendingGrid></TrendingGrid>
       <TagMarquee></TagMarquee>
+
+      <TrendingGrid></TrendingGrid>
       <TrendingCreators></TrendingCreators>
       <WhyCircleX></WhyCircleX>
       <Footer></Footer>
