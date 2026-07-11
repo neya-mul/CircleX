@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useTransition } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
-const CATEGORIES = ['all', 'technology', 'design', 'education', 'funny', 'motivation', 'lifestyle']
+const CATEGORIES = ['all', 'technology', 'design', 'education', 'funny', 'motivation', 'lifestyle', 'others']
 
 export default function ExploreFilters() {
   const router = useRouter()

@@ -14,9 +14,7 @@ export default function PostCard({ post }: { post: any }) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isAnimating, setIsAnimating] = useState<boolean>(false)
 
-  // 🔑 সেশন লোড হওয়ার পর (বা likedBy পরিবর্তন হলে) isLiked স্টেট সিঙ্ক করা
-  // useState-এর initial value শুধু প্রথম রেন্ডারে কাজ করে, কিন্তু useSession()
-  // সাধারণত অ্যাসিঙ্ক্রোনাসভাবে রেজলভ হয় — তাই useEffect দিয়ে সিঙ্ক করা প্রয়োজন
+  // 🔑 সেশন লোড হওয়ার পর isLiked স্টেট সিঙ্ক করা
   useEffect(() => {
     if (user?.id && Array.isArray(post.likedBy)) {
       setIsLiked(post.likedBy.includes(user.id))
@@ -65,12 +63,11 @@ export default function PostCard({ post }: { post: any }) {
 
       const updatedData = await response.json()
 
-      // ব্যাকএন্ড যদি কারেন্ট স্ট্যাটাস রিটার্ন করে, তার সাথে সিঙ্ক করা
+      // ব্যাকএন্ডের একচুয়াল রেসপন্সের সাথে ফ্রন্টএন্ড স্টেট সিঙ্ক করা
       if (updatedData && typeof updatedData.isLikedNow !== 'undefined') {
         setIsLiked(updatedData.isLikedNow)
       }
 
-      // 🔄 লাইক কাউন্টও সার্ভারের প্রকৃত ভ্যালুর সাথে সিঙ্ক করা হচ্ছে
       if (updatedData && typeof updatedData.currentLikes !== 'undefined') {
         setLikeCount(updatedData.currentLikes)
       }
@@ -98,7 +95,7 @@ export default function PostCard({ post }: { post: any }) {
         <div className="relative h-48 w-full overflow-hidden bg-slate-950">
           <img
             src={post.contentImage}
-            alt={post.tag || "Post image"}
+            alt={post.title || "Post image"}
             className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           />
           {post.tag && (
@@ -125,12 +122,17 @@ export default function PostCard({ post }: { post: any }) {
           </div>
         </div>
 
-        {/* পোস্টের মূল কন্টেন্ট */}
+        {/* 🆕 নতুন পোস্ট টাইটেল (লাইন ক্ল্যাম্প সহ) */}
+        <h2 className="text-base font-bold text-slate-100 mb-2 line-clamp-1 hover:text-blue-400 transition-colors duration-200">
+          {post.title || "Untitled Post"} 
+        </h2>
+
+        {/* পোস্টের মূল কন্টেন্ট (line-clamp-2 সহ) */}
         <p className="text-slate-400 text-sm leading-relaxed whitespace-pre-line mb-6 line-clamp-2 min-h-[40px]">
           {post.content}
         </p>
 
-        {/* ৩. অ্যাকশন বাটন সেকশন */}
+        {/* ৩. অ্যাকশন বাটন সেকশন (Like & Details) */}
         <div className="border-t border-slate-800/60 pt-4 mt-auto flex items-center justify-between">
 
           {/* লাইক বাটন */}
