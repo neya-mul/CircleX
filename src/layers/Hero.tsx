@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowDown, ArrowRight, Heart, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, BadgeCheck, Flame, Heart, MessageCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const LIVE_POSTS = [
@@ -59,7 +59,16 @@ export default function HeroBanner() {
             onMouseLeave={() => setSpotlight((s) => ({ ...s, active: false }))}
             className="w-full h-[65vh] bg-[#06060e] overflow-hidden flex items-center px-6 sm:px-16 border-b border-[#161624] relative"
         >
-            {/* 📐 বেস ডট-গ্রিড টেক্সচার (সবসময় অতি হালকা দৃশ্যমান) */}
+            {/* 🌫️ সূক্ষ্ম নয়েজ টেক্সচার — flat gradient কে একটা প্রিমিয়াম, ডিজাইনড ফিনিশ দেয় */}
+            <div
+                className="absolute inset-0 pointer-events-none opacity-[0.035] mix-blend-overlay"
+                style={{
+                    backgroundImage:
+                        "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                }}
+            />
+
+            {/* 📐 বেস ডট-গ্রিড টেক্সচার */}
             <div
                 className="absolute inset-0 pointer-events-none opacity-[0.15]"
                 style={{
@@ -68,7 +77,7 @@ export default function HeroBanner() {
                 }}
             />
 
-            {/* ✨ সিগনেচার: কার্সার-রিঅ্যাকটিভ স্পটলাইট — গ্রিডকে জীবন্ত করে তোলে */}
+            {/* ✨ কার্সার-রিঅ্যাকটিভ স্পটলাইট */}
             <div
                 className="absolute inset-0 pointer-events-none transition-opacity duration-500"
                 style={{
@@ -87,13 +96,14 @@ export default function HeroBanner() {
                 }}
             />
 
-            {/* 🔮 অ্যাম্বিয়েন্ট গ্লো — quiet, tucked in the corner */}
+            {/* 🔮 অ্যাম্বিয়েন্ট গ্লো — এখন দুই রঙের, বেশি গভীরতা দেয় */}
             <motion.div
                 className="absolute right-[-15%] top-[-15%] w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full border border-[#5D3EBC]/15 pointer-events-none"
                 animate={{ scale: [1, 1.05, 1], rotate: 360 }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
             />
             <div className="absolute left-[15%] top-1/4 w-32 h-32 bg-[#6366F1]/10 blur-[80px] pointer-events-none" />
+            <div className="absolute right-[10%] bottom-[-10%] w-40 h-40 bg-[#a78bfa]/10 blur-[90px] pointer-events-none" />
 
             <div className="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-10 lg:gap-16 relative z-10">
                 {/* 📝 বাম পাশ: এনিমেটেড টাইপোগ্রাফি */}
@@ -108,22 +118,35 @@ export default function HeroBanner() {
                         <span className="tabular-nums">3,200</span> posts today
                     </motion.div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 relative">
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 0.6 }}
-                            className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.1]"
+                            className="text-5xl sm:text-7xl font-black text-white tracking-tight leading-[1.05] relative"
                         >
                             Your circle is <br />
-                            <span
-                                className="bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_6s_linear_infinite]"
-                                style={{
-                                    backgroundImage:
-                                        "linear-gradient(90deg, #6366F1, #a78bfa, #ffffff, #a78bfa, #6366F1)",
-                                }}
-                            >
-                                already here.
+                            <span className="relative inline-block">
+                                {/* নিয়ন গ্লো ইফেক্ট — একই টেক্সট ব্লার করে পেছনে বসানো */}
+                                <span
+                                    aria-hidden="true"
+                                    className="absolute inset-0 bg-clip-text text-transparent blur-xl opacity-70 bg-[length:200%_auto] animate-[shimmer_6s_linear_infinite]"
+                                    style={{
+                                        backgroundImage:
+                                            "linear-gradient(90deg, #6366F1, #a78bfa, #ffffff, #a78bfa, #6366F1)",
+                                    }}
+                                >
+                                    already here.
+                                </span>
+                                <span
+                                    className="relative bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_6s_linear_infinite]"
+                                    style={{
+                                        backgroundImage:
+                                            "linear-gradient(90deg, #6366F1, #a78bfa, #ffffff, #a78bfa, #6366F1)",
+                                    }}
+                                >
+                                    already here.
+                                </span>
                             </span>
                         </motion.h1>
 
@@ -156,7 +179,7 @@ export default function HeroBanner() {
                         </motion.button>
 
                         <motion.button
-                            whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+                            whileHover={{ backgroundColor: "rgba(255,255,255,0.05)", borderColor: "rgba(93,62,188,0.5)" }}
                             className="bg-transparent text-gray-300 text-xs font-bold px-5 py-3.5 rounded-xl border border-gray-800 transition-all"
                         >
                             See What's Trending
@@ -226,7 +249,7 @@ export default function HeroBanner() {
                                 initial={{ opacity: 0, x: 15 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.7 + i * 0.15, duration: 0.5 }}
-                                whileHover={{ borderColor: "rgba(99,102,241,0.4)" }}
+                                whileHover={{ borderColor: "rgba(99,102,241,0.4)", scale: 1.015 }}
                                 className="bg-[#06060e] border border-[#161624] rounded-xl p-3 space-y-2 transition-colors"
                             >
                                 <div className="flex items-center gap-2">
@@ -236,7 +259,10 @@ export default function HeroBanner() {
                                         className="w-6 h-6 rounded-full object-cover"
                                     />
                                     <div className="leading-tight">
-                                        <p className="text-[11px] font-bold text-gray-200">{post.name}</p>
+                                        <p className="text-[11px] font-bold text-gray-200 flex items-center gap-1">
+                                            {post.name}
+                                            <BadgeCheck size={11} className="text-[#6366F1]" />
+                                        </p>
                                         <p className="text-[9px] text-gray-500">{post.handle}</p>
                                     </div>
                                 </div>
@@ -258,9 +284,10 @@ export default function HeroBanner() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 1.1, duration: 0.4 }}
-                        className="absolute -top-3 -left-3 bg-[#5D3EBC] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(93,62,188,0.5)] z-10"
+                        className="absolute -top-3 -left-3 bg-[#5D3EBC] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(93,62,188,0.5)] z-10 flex items-center gap-1"
                     >
-                        🔥 Trending now
+                        <Flame size={11} className="fill-white" />
+                        Trending now
                     </motion.div>
                 </motion.div>
             </div>

@@ -1,10 +1,15 @@
 import React from 'react'
-import {getPostDetails} from "../../../lib/allData/postDetails"
+import { getPostDetails } from "../../../lib/allData/postDetails"
 import DetailsComponents from "../../../components/DetailsComponent"
 
-export default async function PostDetails({params}) {
-    const {id} = await params
-    const post = await getPostDetails(id)
+interface PageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function PostDetails({ params }: PageProps) {
+  const { id } = await params
+  const post = await getPostDetails(id)
+
   return (
     <DetailsComponents post={post}></DetailsComponents>
   )
