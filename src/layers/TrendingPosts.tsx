@@ -2,25 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { Heart, MessageSquare, Share2, Bookmark, Flame, CheckCircle, Code } from "lucide-react";
-// ১. Variants টাইপটি এখানে এক্সপ্লিসিটলি ইম্পোর্ট করা হয়েছে
 import { motion, Variants } from "framer-motion";
 import { getAllPosts } from "@/lib/allData/all-posts";
 import PostCard from "@/components/PostCard";
 
 export default function TrendingGrid() {
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState<any[]>([])
+
   useEffect(() => {
     const getData = async () => {
-      const data = await getAllPosts()
-      setPosts(data)
-
+      const data = await getAllPosts({ limit: 8 }) // ট্রেন্ডিং সেকশনে শুধু ৮টা পোস্টই দরকার
+      setPosts(data?.posts || []) // ✅ .posts এক্সট্র্যাক্ট করা হলো, ফেইল হলে খালি অ্যারে
     }
     getData()
   }, [])
 
-  
-
-  // ২. টাইপস্ক্রিপ্ট এরর দূর করতে এখানে : Variants টাইপ অ্যাসাইন করা হলো
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -61,7 +57,7 @@ export default function TrendingGrid() {
       >
         {
           posts.slice(0, 8).map((post: any, ind: number) => (
-            <PostCard key={ind} post={post} />
+            <PostCard key={post._id || ind} post={post} />
           ))
         }
       </motion.div>
