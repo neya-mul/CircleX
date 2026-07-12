@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {  Menu, X, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authClient, useSession } from "@/lib/auth-client";
+import Image from "next/image";
+import logo from '../../public/Images/logo.png'
 
 type NavLink = { name: string; href: string };
 
@@ -60,14 +62,16 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full h-16 bg-[#06060e]/80 backdrop-blur-md border-b border-[#161624] sticky top-0 z-50 px-4 sm:px-8 flex items-center justify-between"
+            className="w-full h-16 bg-[#06060e]/80  backdrop-blur-md border-b border-[#161624] sticky top-0 z-50 px-4 sm:px-8 flex items-center justify-between"
         >
             {/* লোগো */}
             <Link href="/" className="flex items-center gap-2 shrink-0">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#5D3EBC] to-[#6366F1] flex items-center justify-center font-black text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]">
-                    C
-                </div>
-                <span className="text-lg font-bold text-white tracking-tight">CircleX</span>
+                <Image
+                    src={logo}
+                    alt="CircleX logo"
+                    className="h-9 w-auto object-contain"
+                    priority
+                />
             </Link>
 
             {/* ডেস্কটপ মেনু লিংকস */}
@@ -78,11 +82,10 @@ export default function Navbar() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className={`text-xs font-semibold px-4 py-2 rounded-lg transition-all ${
-                                active
-                                    ? "bg-[#1d1b3c] text-[#7c7fff]"
-                                    : "text-gray-400 hover:text-white"
-                            }`}
+                            className={`text-xs font-semibold px-4 py-2 rounded-lg transition-all ${active
+                                ? "bg-[#1d1b3c] text-[#7c7fff]"
+                                : "text-gray-400 hover:text-white"
+                                }`}
                         >
                             {link.name}
                         </Link>
@@ -92,18 +95,6 @@ export default function Navbar() {
 
             {/* রাইট অ্যাকশন বাটন (ডেস্কটপ) */}
             <div className="hidden md:flex items-center gap-4">
-                {/* সার্চ বাটন রিমুভ করা হয়েছে */}
-
-                {/* {isLoggedIn && (
-                    <button
-                        aria-label="Notifications"
-                        className="relative p-1.5 text-gray-400 hover:text-white bg-[#0d0e1a] border border-gray-900 rounded-lg mr-1"
-                    >
-                        <Bell size={16} />
-                        <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#5D3EBC] rounded-full"></span>
-                    </button>
-                )} */}
-
                 {isPending ? (
                     // সেশন লোড হওয়ার সময় স্কেলিতন
                     <div className="flex items-center gap-2 bg-[#0d0e1a] border border-gray-900 pr-3 pl-1.5 py-1 rounded-xl animate-pulse">
@@ -163,7 +154,7 @@ export default function Navbar() {
                         </AnimatePresence>
                     </div>
                 ) : (
-                    // লগআউট অবস্থায় ডেডিকেটেড লগইন এবং রেজিস্টার লিংক
+                    // লগআউট অবস্থায় ডেডিকেটেড লগইন এবং রেজিস্টার লিংক
                     <div className="flex items-center gap-3">
                         <Link
                             href="/login"
@@ -206,11 +197,10 @@ export default function Navbar() {
                                     key={link.name}
                                     href={link.href}
                                     onClick={() => setIsOpen(false)}
-                                    className={`text-sm py-2 px-3 rounded-lg transition-colors ${
-                                        active
-                                            ? "bg-[#1d1b3c] text-[#7c7fff]"
-                                            : "text-gray-400 hover:text-white hover:bg-[#0d0e1a]"
-                                    }`}
+                                    className={`text-sm py-2 px-3 rounded-lg transition-colors ${active
+                                        ? "bg-[#1d1b3c] text-[#7c7fff]"
+                                        : "text-gray-400 hover:text-white hover:bg-[#0d0e1a]"
+                                        }`}
                                 >
                                     {link.name}
                                 </Link>

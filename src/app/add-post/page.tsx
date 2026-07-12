@@ -61,6 +61,7 @@ export default function AddPost() {
         const postData = {
             title,
             authorName: user?.name,
+            authorEmail: user?.email, // 👈 এটি অবশ্যই যোগ করবেন যাতে ManagePosts ফিল্টার করতে পারে
             avatar: user?.image || 'https://api.dicebear.com/7.x/avataaars/svg',
             category,
             content,
