@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { uploadImageToImgBB } from '@/lib/uploadToIamgeBB'
 import { toast } from 'react-toastify'
 import { Camera } from 'lucide-react'
+import { FaCamera } from 'react-icons/fa'
 
 export default function AddPost() {
     const { data: session } = useSession()
@@ -29,7 +30,7 @@ export default function AddPost() {
             const uploadedUrl = await uploadImageToImgBB(file)
             if (uploadedUrl) {
                 setContentImage(uploadedUrl)
-                toast.success(`Image uploaded successfully!${<Camera />} `)
+                toast.success(`Image uploaded successfully!  ${<FaCamera />} `)
             }
         } catch (error) {
             console.error("Image upload failed:", error)
