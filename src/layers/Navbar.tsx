@@ -65,22 +65,31 @@ export default function Navbar() {
             className="w-full h-16 bg-[#06060e]/80  backdrop-blur-md border-b border-[#161624] sticky top-0 z-50 px-4 sm:px-8 flex items-center justify-between"
         >
             {/* লোগো */}
-            <Link href="/" className="flex items-center gap-2 shrink-0 hover:opacity-90 transition">
-                <div
-                    className="h-9 w-36 bg-gradient-to-r from-blue-500 via-indigo-400 to-cyan-400"
-                    style={{
-                        // 💡 লোগোর শেপ অনুযায়ী নিচের গ্রাডিয়েন্টটিকে কেটে নেবে (Masking Trick)
-                        maskImage: `url(${logo.src || logo})`,
-                        WebkitMaskImage: `url(${logo.src || logo})`,
-                        maskSize: 'contain',
-                        WebkitMaskSize: 'contain',
-                        maskRepeat: 'no-repeat',
-                        WebkitMaskRepeat: 'no-repeat',
-                        maskPosition: 'left center',
-                        WebkitMaskPosition: 'left center'
-                    }}
-                />
-            </Link>
+           <Link href="/" className="flex items-center gap-2 shrink-0 group relative p-1">
+    {/* 🌌 ব্যাকগ্রাউন্ড অ্যাম্বিয়েন্ট গ্লো (লোগোর পেছনের হালকা নিয়ন আভা) */}
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-cyan-500/5 to-indigo-600/20 blur-xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+
+    {/* 🎨 মাস্কড লোগো কন্টেইনার */}
+    <div 
+        className="h-9 w-36 relative bg-gradient-to-r from-blue-600 via-indigo-400 via-cyan-400 to-blue-600 animate-gradient-flow transform group-hover:scale-[1.03] transition-all duration-300"
+        style={{
+            // 💡 লোগোর শেপ অনুযায়ী নিখুঁত মাস্কিং
+            maskImage: `url(${logo.src || logo})`,
+            WebkitMaskImage: `url(${logo.src || logo})`,
+            maskSize: 'contain',
+            WebkitMaskSize: 'contain',
+            maskRepeat: 'no-repeat',
+            WebkitMaskRepeat: 'no-repeat',
+            maskPosition: 'left center',
+            WebkitMaskPosition: 'left center',
+            // ⚡ সাইবারপাঙ্ক ভাইব ড্যাশবোর্ড শ্যাডো
+            filter: 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.55)) drop-shadow(0 0 20px rgba(34, 211, 238, 0.2))'
+        }}
+    >
+        {/* ✨ হোভার করলে লোগোর ভেতর দিয়ে সাদা আলোর লেজার তরঙ্গ চলে যাবে */}
+        <div className="absolute inset-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-laser-shine" />
+    </div>
+</Link>
             {/* ডেস্কটপ মেনু লিংকস */}
             <div className="hidden md:flex items-center gap-1.5 bg-[#0d0e1a] p-1 rounded-xl border border-gray-950">
                 {navLinks.map((link) => {

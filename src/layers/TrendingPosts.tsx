@@ -35,7 +35,7 @@ export default function TrendingGrid() {
   };
 
   return (
-    <section className="container mx-auto py-6">
+    <section className="container mx-auto py-6" >
       {/* সেকশন হেডার */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
