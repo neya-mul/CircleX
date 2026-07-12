@@ -30,7 +30,7 @@ export default function AddPost() {
             const uploadedUrl = await uploadImageToImgBB(file)
             if (uploadedUrl) {
                 setContentImage(uploadedUrl)
-                toast.success(`Image uploaded successfully!  ${<FaCamera />} `)
+                toast.success(`Image uploaded successfully! `)
             }
         } catch (error) {
             console.error("Image upload failed:", error)
