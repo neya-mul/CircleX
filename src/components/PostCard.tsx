@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useSession } from '@/lib/auth-client'
+import { toast } from 'react-toastify'
 
 export default function PostCard({ post }: { post: any }) {
   const { data: session } = useSession()
@@ -27,7 +28,7 @@ export default function PostCard({ post }: { post: any }) {
 
     // 🔒 সিকিউরিটি গার্ড: ইউজার লগইন না করে থাকলে লাইক দিতে পারবে না
     if (!user) {
-      alert("Please log in to like this post!");
+      toast.error("Please log in to like this post!");
       return;
     }
 

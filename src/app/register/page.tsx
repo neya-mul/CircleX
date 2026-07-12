@@ -179,7 +179,7 @@ export default function RegisterPage() {
                 email: formData.email.trim().toLowerCase(),
                 password: formData.password,
                 image: uploadedImageUrl,
-                callbackURL: "/",
+                callbackURL: "/login",
             });
 
             // Better-Auth সাধারণত থ্রো না করে error অবজেক্ট রিটার্ন করে — এটা অবশ্যই চেক করতে হবে
@@ -189,14 +189,15 @@ export default function RegisterPage() {
 
             if (!isMountedRef.current) return;
 
-            setStatusMsg({ type: "success", text: "Account created successfully! Redirecting..." });
+            setStatusMsg({ type: "success", text: "Account created successfully! Redirecting to login..." });
 
             // সফল হলে ফর্ম রিসেট করুন
             setFormData({ name: "", email: "", password: "" });
             clearImage();
 
+            // ✅ রেজিস্ট্রেশন সফল হওয়ার পর লগইন পেজে রিডাইরেক্ট করা হচ্ছে
             setTimeout(() => {
-                if (isMountedRef.current) router.push("/");
+                if (isMountedRef.current) router.push("/login");
             }, 1200);
         } catch (error: any) {
             if (!isMountedRef.current) return;

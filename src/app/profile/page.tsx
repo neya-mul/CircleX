@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useSession } from '@/lib/auth-client'
+import { authClient, useSession } from '@/lib/auth-client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
-import { FaPen } from 'react-icons/fa'
+import { FaDoorOpen, FaLongArrowAltRight, FaPen } from 'react-icons/fa'
+import { IoIosLogOut } from 'react-icons/io'
 
 export default function Profile() {
   const { data: session } = useSession()
@@ -18,8 +19,10 @@ export default function Profile() {
   // 🚪 লগআউট হ্যান্ডলার
   const handleLogout = async () => {
     try {
-      toast.success("Logged out successfully! See you soon. 👋")
-      // আপনার signOut লজিক এখানে হবে
+      await authClient.signOut()
+      window.location.reload()
+      toast.success("Logged out successfully! See you soon. ")
+
     } catch (error) {
       toast.error("Failed to log out.")
     }
@@ -51,12 +54,12 @@ export default function Profile() {
       })
 
       if (!response.ok) throw new Error('Failed to update profile')
-      
+
       const result = await response.json()
       if (result.success) {
-        toast.success("Profile updated successfully! 🎉")
+        toast.success("Profile updated successfully! ")
         setIsEditModalOpen(false)
-        
+
         // 🔄 সেশন ডাটা ইনস্ট্যান্ট রিফ্রেশ করার জন্য পেজ রিলোড বা auth সেশন রিলোড দিন
         window.location.reload()
       }
@@ -91,7 +94,7 @@ export default function Profile() {
             <p className="text-xs text-slate-400 mt-0.5">Manage your account details.</p>
           </div>
           {/* ✏️ এডিট ডিটেইলস বাটন */}
-          <button 
+          <button
             onClick={openEditModal}
             className="text-xs font-medium flex items-center gap-2 text-amber-400 bg-amber-950/40 border border-amber-900/40 hover:bg-amber-900/40 px-3 py-1.5 rounded-lg transition"
           >
@@ -101,12 +104,35 @@ export default function Profile() {
 
         {/* প্রোফাইল ডিসপ্লে */}
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500/30 p-1 bg-slate-950">
-            <img src={user?.image || 'https://api.dicebear.com/7.x/avataaars/svg'} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+          <div className="w-24 h-24 rounded-full border-2 border-[#5D3EBC]/40 p-1 bg-slate-950">
+            {user?.image ? (
+              <img
+                src={user.image}
+                alt={user.name || "User"}
+                className="w-full h-full object-cover rounded-full"
+              />
+            ) : (
+              <div className="w-full h-full rounded-full bg-[#5D3EBC]/30 flex items-center justify-center">
+                <span className="text-3xl font-bold text-white">
+                  {user?.name
+                    ?.split(" ")
+                    .map((word) => word[0])
+                    .slice(0, 2)
+                    .join("")
+                    .toUpperCase() || "A"}
+                </span>
+              </div>
+            )}
           </div>
-          <div className="space-y-1">
-            <h3 className="text-lg font-bold text-slate-100">{user?.name || 'Anonymous User'}</h3>
-            <p className="text-xs text-slate-400 bg-slate-950 px-3 py-1 border border-slate-800 rounded-full inline-block">{user?.email}</p>
+
+          <div className="space-y-1 text-center">
+            <h3 className="text-lg font-bold text-slate-100">
+              {user?.name || "Anonymous User"}
+            </h3>
+
+            <p className="text-xs text-slate-400 bg-slate-950 px-3 py-1 border border-slate-800 rounded-full inline-block">
+              {user?.email || "No email available"}
+            </p>
           </div>
         </div>
 
@@ -120,8 +146,9 @@ export default function Profile() {
 
         {/* লগআউট বাটন */}
         <div className="pt-2">
-          <button onClick={handleLogout} className="w-full flex items-center justify-center py-3 px-4 font-semibold text-sm rounded-xl text-rose-400 bg-rose-950/30 border border-rose-900/30 hover:bg-rose-900/40 active:scale-[0.98] transition-all duration-200">
-            🚪 Log Out from CircleX
+          <button onClick={handleLogout} className="w-full gap-2 flex items-center justify-center py-3 px-4 font-semibold text-sm rounded-xl text-rose-400 bg-rose-950/30 border border-rose-900/30 hover:bg-rose-900/40 active:scale-[0.98] transition-all duration-200">
+            Log Out from CircleX <IoIosLogOut />
+
           </button>
         </div>
       </motion.div>
@@ -130,36 +157,36 @@ export default function Profile() {
       <AnimatePresence>
         {isEditModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }} 
-              animate={{ opacity: 1, scale: 1 }} 
-              exit={{ opacity: 0, scale: 0.95 }} 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4"
             >
               <h3 className="text-lg font-bold text-white">Edit Profile Details</h3>
-              
+
               <form onSubmit={handleProfileUpdate} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Full Name</label>
-                  <input 
-                    type="text" 
-                    value={editName} 
-                    onChange={(e) => setEditName(e.target.value)} 
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-blue-500/50 transition duration-200" 
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-blue-500/50 transition duration-200"
                     placeholder="Enter your name"
                   />
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-2">
-                  <button 
-                    type="button" 
-                    onClick={() => setIsEditModalOpen(false)} 
+                  <button
+                    type="button"
+                    onClick={() => setIsEditModalOpen(false)}
                     className="px-4 py-2 text-xs font-semibold bg-slate-950 border border-slate-800 rounded-xl hover:bg-slate-900 transition"
                   >
                     Cancel
                   </button>
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={isUpdating}
                     className="px-4 py-2 text-xs font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-500 transition"
                   >

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import { useSession } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 interface PostProps {
   post: {
@@ -38,7 +39,7 @@ export default function DetailsComponent({ post }: PostProps) {
   const handleLike = async () => {
     // 🔒 সিকিউরিটি গার্ড: ইউজার লগইন না করে থাকলে লাইক দিতে পারবে না
     if (!user) {
-      alert("Please log in to like this post!");
+      toast.error("Please log in to like this post!");
       return;
     }
 

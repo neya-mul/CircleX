@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, Loader2, ArrowRight, Sparkles, AlertCircle } from "lucide-react";
+import { Mail, Lock, Loader2, ArrowRight, Sparkles, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,7 +91,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* 🔒 পাসওয়ার্ড ইনপুট */}
+          {/* 🔒 পাসওয়ার্ড ইনপুট */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Password</label>
@@ -101,13 +102,23 @@ export default function LoginPage() {
             <div className="relative">
               <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
               <input 
-                type="password" 
+                type={showPassword ? "text" : "password"}
                 required
                 placeholder="••••••••" 
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-[#06060e] border border-[#161624] focus:border-[#5D3EBC] rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors"
+                className="w-full bg-[#06060e] border border-[#161624] focus:border-[#5D3EBC] rounded-xl pl-10 pr-10 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors"
               />
+              {/* 👁️ পাসওয়ার্ড ভিজিবিলিটি টগল বাটন */}
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
           </div>
 
