@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useSession } from '@/lib/auth-client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
+import { FaPen } from 'react-icons/fa'
 
 export default function Profile() {
   const { data: session } = useSession()
@@ -92,9 +93,9 @@ export default function Profile() {
           {/* ✏️ এডিট ডিটেইলস বাটন */}
           <button 
             onClick={openEditModal}
-            className="text-xs font-medium text-amber-400 bg-amber-950/40 border border-amber-900/40 hover:bg-amber-900/40 px-3 py-1.5 rounded-lg transition"
+            className="text-xs font-medium flex items-center gap-2 text-amber-400 bg-amber-950/40 border border-amber-900/40 hover:bg-amber-900/40 px-3 py-1.5 rounded-lg transition"
           >
-            ✏️ Edit Details
+            <FaPen /> Edit Details
           </button>
         </div>
 
@@ -114,7 +115,7 @@ export default function Profile() {
         {/* স্ট্যাটাস সেকশন */}
         <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl p-4 text-left text-xs space-y-2">
           <div className="flex justify-between"><span className="text-slate-500">Account Status</span><span className="text-emerald-400 font-semibold uppercase">Active</span></div>
-          <div className="flex justify-between"><span className="text-slate-500">Role</span><span className="text-blue-400 font-semibold">Creator</span></div>
+          {/* <div className="flex justify-between"><span className="text-slate-500">Role</span><span className="text-blue-400 font-semibold">Creator</span></div> */}
         </div>
 
         {/* লগআউট বাটন */}

@@ -187,9 +187,9 @@ export default function AddPost() {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="text-center space-y-1">
+                                <div className="text-center space-y-1 flex items-center gap-2">
                                     <span className="text-xl"><Camera /></span>
-                                    <p className="text-sm font-medium text-slate-300">Click to upload image</p>
+                                    <p className="text-md font-medium text-slate-300">Click to upload image</p>
                                 </div>
                             )}
                         </div>
