@@ -6,11 +6,14 @@ interface GetAllPostsParams {
 }
 
 export async function getAllPosts({
+  
   search = '',
   category = 'all',
   page = 1,
   limit = 8,
 }: GetAllPostsParams = {}) {
+
+  // await new Promise((r) => setTimeout(r, 3000));
   try {
     const params = new URLSearchParams({
       search,
