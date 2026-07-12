@@ -1,8 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, BadgeCheck, Flame, Heart, MessageCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+
+// 🎨 হেডলাইনের জন্য আলাদা ডিসপ্লে ফন্ট — Google Fonts CDN থেকে <link> ট্যাগ দিয়ে লোড করা হচ্ছে
+// (next/font/google এড়িয়ে চলা হয়েছে, কারণ সেটার জন্য build-time এ Google-এ নেটওয়ার্ক অ্যাক্সেস লাগে,
+// যা অনেক sandbox/restricted dev environment-এ ফেইল করে)
+const DISPLAY_FONT_FAMILY = "'Space Grotesk', sans-serif";
 
 const LIVE_POSTS = [
     {
@@ -30,9 +35,27 @@ const STACK_AVATARS = [
     "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
 ];
 
+function useCountUp(target: number, durationMs = 1200) {
+    const [value, setValue] = useState(0);
+    useEffect(() => {
+        let raf: number;
+        const start = performance.now();
+        const tick = (now: number) => {
+            const progress = Math.min((now - start) / durationMs, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            setValue(Math.floor(eased * target));
+            if (progress < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+    }, [target, durationMs]);
+    return value;
+}
+
 export default function HeroBanner() {
     const heroRef = useRef<HTMLDivElement>(null);
     const [spotlight, setSpotlight] = useState({ x: 50, y: 50, active: false });
+    const postCount = useCountUp(3200);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = heroRef.current?.getBoundingClientRect();
@@ -59,7 +82,15 @@ export default function HeroBanner() {
             onMouseLeave={() => setSpotlight((s) => ({ ...s, active: false }))}
             className="w-full h-[65vh] bg-[#06060e] overflow-hidden flex items-center px-6 sm:px-16 border-b border-[#161624] relative"
         >
-            {/* 🌫️ সূক্ষ্ম নয়েজ টেক্সচার — flat gradient কে একটা প্রিমিয়াম, ডিজাইনড ফিনিশ দেয় */}
+            {/* Google Fonts থেকে Space Grotesk লোড করার লিঙ্ক — Next.js এগুলো স্বয়ংক্রিয়ভাবে
+                <head>-এ hoist করে দেয়, যেখানেই JSX ট্রিতে রেন্ডার করা হোক না কেন */}
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link
+                href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&display=swap"
+                rel="stylesheet"
+            />
+            {/* 🌫️ সূক্ষ্ম নয়েজ টেক্সচার */}
             <div
                 className="absolute inset-0 pointer-events-none opacity-[0.035] mix-blend-overlay"
                 style={{
@@ -96,7 +127,7 @@ export default function HeroBanner() {
                 }}
             />
 
-            {/* 🔮 অ্যাম্বিয়েন্ট গ্লো — এখন দুই রঙের, বেশি গভীরতা দেয় */}
+            {/* 🔮 অ্যাম্বিয়েন্ট গ্লো */}
             <motion.div
                 className="absolute right-[-15%] top-[-15%] w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full border border-[#5D3EBC]/15 pointer-events-none"
                 animate={{ scale: [1, 1.05, 1], rotate: 360 }}
@@ -105,9 +136,9 @@ export default function HeroBanner() {
             <div className="absolute left-[15%] top-1/4 w-32 h-32 bg-[#6366F1]/10 blur-[80px] pointer-events-none" />
             <div className="absolute right-[10%] bottom-[-10%] w-40 h-40 bg-[#a78bfa]/10 blur-[90px] pointer-events-none" />
 
-            <div className="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-10 lg:gap-16 relative z-10">
+            <div className="max-w-6xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12 relative z-10">
                 {/* 📝 বাম পাশ: এনিমেটেড টাইপোগ্রাফি */}
-                <div className="w-full md:max-w-lg space-y-6">
+                <div className="w-full lg:max-w-lg space-y-6">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -115,7 +146,7 @@ export default function HeroBanner() {
                         className="inline-flex items-center gap-1.5 bg-[#12112a] border border-[#5D3EBC]/40 px-3 py-1 rounded-full text-[10px] font-bold text-[#9295ff] tracking-wider uppercase shadow-[0_0_15px_rgba(93,62,188,0.2)]"
                     >
                         <Sparkles size={10} />
-                        <span className="tabular-nums">3,200</span> posts today
+                        <span className="tabular-nums">{postCount.toLocaleString()}</span> posts today
                     </motion.div>
 
                     <div className="space-y-4 relative">
@@ -123,11 +154,12 @@ export default function HeroBanner() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 0.6 }}
-                            className="text-5xl sm:text-7xl font-black text-white tracking-tight leading-[1.05] relative"
+                            className="text-5xl sm:text-7xl text-white tracking-tight leading-[1.03] relative"
+                            style={{ fontFamily: DISPLAY_FONT_FAMILY }}
                         >
                             Your circle is <br />
                             <span className="relative inline-block">
-                                {/* নিয়ন গ্লো ইফেক্ট — একই টেক্সট ব্লার করে পেছনে বসানো */}
+                                {/* নিয়ন গ্লো ইফেক্ট */}
                                 <span
                                     aria-hidden="true"
                                     className="absolute inset-0 bg-clip-text text-transparent blur-xl opacity-70 bg-[length:200%_auto] animate-[shimmer_6s_linear_infinite]"
@@ -211,83 +243,95 @@ export default function HeroBanner() {
                     </motion.div>
                 </div>
 
-                {/* 📱 ডান পাশ: লাইভ ফিড প্রিভিউ কার্ড — bobbing, glowing border */}
+                {/* 📱 ডান পাশ: স্ট্যাকড-কার্ড ডেপথ ইফেক্ট সহ লাইভ ফিড প্রিভিউ */}
                 <motion.div
-                    initial={{ opacity: 0, y: 30, rotate: -2 }}
-                    animate={{
-                        opacity: 1,
-                        rotate: -2,
-                        y: [0, -8, 0],
-                    }}
-                    transition={{
-                        opacity: { delay: 0.4, duration: 0.7 },
-                        y: { delay: 1, duration: 4.5, repeat: Infinity, ease: "easeInOut" },
-                    }}
-                    whileHover={{ rotate: 0, scale: 1.02 }}
-                    className="hidden md:block relative w-full max-w-[280px] shrink-0"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.7 }}
+                    className="hidden lg:block relative w-full max-w-[300px] shrink-0 lg:-mr-6 xl:-mr-10"
                 >
-                    {/* গ্রেডিয়েন্ট গ্লো বর্ডার */}
-                    <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-[#6366F1]/40 via-transparent to-[#5D3EBC]/40 blur-[2px] pointer-events-none" />
+                    {/* 👻 ঘোস্ট কার্ড — মূল কার্ডের পেছনে অফসেট করে বসানো, একটা real card-stack এর ইলিউশন তৈরি করে */}
+                    <div
+                        className="absolute inset-0 bg-[#0b0c16]/60 border border-[#161624] rounded-2xl"
+                        style={{ transform: "rotate(-8deg) translate(10px, 14px)" }}
+                    />
+                    <div
+                        className="absolute inset-0 bg-[#0b0c16]/80 border border-[#161624] rounded-2xl"
+                        style={{ transform: "rotate(-4deg) translate(5px, 7px)" }}
+                    />
 
-                    <div className="relative w-full bg-[#0b0c16]/95 backdrop-blur-md border border-[#161624] rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.55)] space-y-3">
-                        <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-                                Live on your feed
-                            </span>
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-400">
-                                <span className="relative flex h-1.5 w-1.5">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                    {/* মূল কার্ড — bobbing + glowing border */}
+                    <motion.div
+                        animate={{ rotate: -2, y: [0, -8, 0] }}
+                        transition={{
+                            rotate: { duration: 0 },
+                            y: { delay: 1, duration: 4.5, repeat: Infinity, ease: "easeInOut" },
+                        }}
+                        whileHover={{ rotate: 0, scale: 1.02 }}
+                        className="relative"
+                    >
+                        <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-[#6366F1]/40 via-transparent to-[#5D3EBC]/40 blur-[2px] pointer-events-none" />
+
+                        <div className="relative w-full bg-[#0b0c16]/95 backdrop-blur-md border border-[#161624] rounded-2xl p-4 shadow-[0_20px_60px_rgba(0,0,0,0.55)] space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                    Live on your feed
                                 </span>
-                                Live
-                            </span>
+                                <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-400">
+                                    <span className="relative flex h-1.5 w-1.5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                                    </span>
+                                    Live
+                                </span>
+                            </div>
+
+                            {LIVE_POSTS.map((post, i) => (
+                                <motion.div
+                                    key={post.handle}
+                                    initial={{ opacity: 0, x: 15 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.7 + i * 0.15, duration: 0.5 }}
+                                    whileHover={{ borderColor: "rgba(99,102,241,0.4)", scale: 1.015 }}
+                                    className="bg-[#06060e] border border-[#161624] rounded-xl p-3 space-y-2 transition-colors"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <img
+                                            src={post.avatar}
+                                            alt={post.name}
+                                            className="w-6 h-6 rounded-full object-cover"
+                                        />
+                                        <div className="leading-tight">
+                                            <p className="text-[11px] font-bold text-gray-200 flex items-center gap-1">
+                                                {post.name}
+                                                <BadgeCheck size={11} className="text-[#6366F1]" />
+                                            </p>
+                                            <p className="text-[9px] text-gray-500">{post.handle}</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400 leading-snug">{post.snippet}</p>
+                                    <div className="flex items-center gap-3 pt-0.5">
+                                        <span className="flex items-center gap-1 text-[10px] text-gray-500">
+                                            <Heart size={11} /> {post.likes}
+                                        </span>
+                                        <span className="flex items-center gap-1 text-[10px] text-gray-500">
+                                            <MessageCircle size={11} /> {post.comments}
+                                        </span>
+                                    </div>
+                                </motion.div>
+                            ))}
                         </div>
 
-                        {LIVE_POSTS.map((post, i) => (
-                            <motion.div
-                                key={post.handle}
-                                initial={{ opacity: 0, x: 15 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.7 + i * 0.15, duration: 0.5 }}
-                                whileHover={{ borderColor: "rgba(99,102,241,0.4)", scale: 1.015 }}
-                                className="bg-[#06060e] border border-[#161624] rounded-xl p-3 space-y-2 transition-colors"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <img
-                                        src={post.avatar}
-                                        alt={post.name}
-                                        className="w-6 h-6 rounded-full object-cover"
-                                    />
-                                    <div className="leading-tight">
-                                        <p className="text-[11px] font-bold text-gray-200 flex items-center gap-1">
-                                            {post.name}
-                                            <BadgeCheck size={11} className="text-[#6366F1]" />
-                                        </p>
-                                        <p className="text-[9px] text-gray-500">{post.handle}</p>
-                                    </div>
-                                </div>
-                                <p className="text-[11px] text-gray-400 leading-snug">{post.snippet}</p>
-                                <div className="flex items-center gap-3 pt-0.5">
-                                    <span className="flex items-center gap-1 text-[10px] text-gray-500">
-                                        <Heart size={11} /> {post.likes}
-                                    </span>
-                                    <span className="flex items-center gap-1 text-[10px] text-gray-500">
-                                        <MessageCircle size={11} /> {post.comments}
-                                    </span>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* ছোট ফ্লোটিং ব্যাজ */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 1.1, duration: 0.4 }}
-                        className="absolute -top-3 -left-3 bg-[#5D3EBC] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(93,62,188,0.5)] z-10 flex items-center gap-1"
-                    >
-                        <Flame size={11} className="fill-white" />
-                        Trending now
+                        {/* ছোট ফ্লোটিং ব্যাজ */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 1.1, duration: 0.4 }}
+                            className="absolute -top-3 -left-3 bg-[#5D3EBC] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(93,62,188,0.5)] z-10 flex items-center gap-1"
+                        >
+                            <Flame size={11} className="fill-white" />
+                            Trending now
+                        </motion.div>
                     </motion.div>
                 </motion.div>
             </div>
