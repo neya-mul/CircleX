@@ -52,13 +52,13 @@ export default function Footer() {
 
           {/* সোশ্যাল হ্যান্ডেলসমূহ */}
           <div className="flex items-center gap-3 pt-2">
-            <motion.a whileHover={{ y: -2, color: "#fff" }} href="https://github.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0d0e1a] border border-gray-950 rounded-xl text-gray-400 transition-colors">
+            <motion.a whileHover={{ y: -2, color: "#fff" }} href="https://github.com/neya-mul" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0d0e1a] border border-gray-950 rounded-xl text-gray-400 transition-colors">
               <FaGithub size={16} />
             </motion.a>
-            <motion.a whileHover={{ y: -2, color: "#1DA1F2" }} href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0d0e1a] border border-gray-950 rounded-xl text-gray-400 transition-colors">
+            {/* <motion.a whileHover={{ y: -2, color: "#1DA1F2" }} href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0d0e1a] border border-gray-950 rounded-xl text-gray-400 transition-colors">
               <FaXTwitter size={16} />
-            </motion.a>
-            <motion.a whileHover={{ y: -2, color: "#0077B5" }} href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0d0e1a] border border-gray-950 rounded-xl text-gray-400 transition-colors">
+            </motion.a> */}
+            <motion.a whileHover={{ y: -2, color: "#0077B5" }} href="https://linkedin.com/in/neya-mul" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0d0e1a] border border-gray-950 rounded-xl text-gray-400 transition-colors">
               <FaLinkedinIn size={16} />
             </motion.a>
             <motion.a whileHover={{ y: -2, color: "#25D366" }} href="https://wa.me/8801874062550" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#0d0e1a] border border-gray-950 rounded-xl text-gray-400 transition-colors">
