@@ -5,6 +5,12 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 const CATEGORIES = ['all', 'technology', 'design', 'education', 'funny', 'motivation', 'lifestyle', 'others']
 
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Newest First' },
+  { value: 'mostLiked', label: 'Most Liked' },
+  { value: 'leastLiked', label: 'Least Liked' },
+]
+
 export default function ExploreFilters() {
   const router = useRouter()
   const pathname = usePathname()
@@ -13,8 +19,6 @@ export default function ExploreFilters() {
 
   const [searchInput, setSearchInput] = useState(searchParams.get('search') || '')
 
-  // 🔎 ডিবাউন্স করা সার্চ — প্রতিটা কিস্ট্রোকে রিকোয়েস্ট না পাঠিয়ে
-  // ইউজার টাইপ করা থামানোর ৪০০ms পর সার্চ ট্রিগার হবে
   useEffect(() => {
     const timeout = setTimeout(() => {
       updateParams({ search: searchInput, page: '1' })
@@ -28,7 +32,8 @@ export default function ExploreFilters() {
     const params = new URLSearchParams(searchParams.toString())
 
     Object.entries(updates).forEach(([key, value]) => {
-      if (value && value !== 'all' && value !== '') {
+      // ⚠️ 'newest' কে ডিফল্ট ধরা হয়েছে, তাই সেটাকে URL-এ না রেখে বাদ দেওয়া হচ্ছে (cleaner URLs)
+      if (value && value !== 'all' && value !== '' && value !== 'newest') {
         params.set(key, value)
       } else {
         params.delete(key)
@@ -42,6 +47,10 @@ export default function ExploreFilters() {
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateParams({ category: e.target.value, page: '1' })
+  }
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateParams({ sortBy: e.target.value, page: '1' })
   }
 
   return (
@@ -79,23 +88,43 @@ export default function ExploreFilters() {
         )}
       </div>
 
-      {/* ড্রপডাউন মেনু — ডান পাশে */}
-      <div className="flex items-center gap-2 lg:justify-end">
-        <label htmlFor="category" className="text-sm font-medium text-gray-400 whitespace-nowrap">
-          Filter by:
-        </label>
-        <select
-          id="category"
-          defaultValue={searchParams.get('category') || 'all'}
-          onChange={handleCategoryChange}
-          className="bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-        >
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat === 'all' ? 'All Categories' : cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </option>
-          ))}
-        </select>
+      {/* ড্রপডাউন মেনুসমূহ — ডান পাশে, ক্যাটাগরি ও সর্ট একসাথে */}
+      <div className="flex items-center gap-3 lg:justify-end flex-wrap">
+        <div className="flex items-center gap-2">
+          <label htmlFor="category" className="text-sm font-medium text-gray-400 whitespace-nowrap">
+            Filter by:
+          </label>
+          <select
+            id="category"
+            defaultValue={searchParams.get('category') || 'all'}
+            onChange={handleCategoryChange}
+            className="bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat === 'all' ? 'All Categories' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="sortBy" className="text-sm font-medium text-gray-400 whitespace-nowrap">
+            Sort by:
+          </label>
+          <select
+            id="sortBy"
+            defaultValue={searchParams.get('sortBy') || 'newest'}
+            onChange={handleSortChange}
+            className="bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
     </div>
