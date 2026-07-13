@@ -1,15 +1,22 @@
-'use server'
+import { getToken } from "../generateToken";
 
 export const getPostDetails = async (id: string) => {
-    // ফিক্সড: ইউআরএল থেকে কোলন (:) বাদ দেওয়া হয়েছে
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/all-posts/${id}`, {
-        cache: 'no-store' // রিয়েল-টাইম ডাটা নিশ্চিত করার জন্য
-    })
-    
-    if (!res.ok) {
-        return null;
-    }
+    const token = await getToken();
 
-    const postDetails = await res.json()
-    return postDetails || null
-}
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/all-posts/${id}`,
+        {
+            cache: "no-store",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    console.log("Status:", res.status);
+
+    const text = await res.text();
+    console.log(text);
+
+    return text ? JSON.parse(text) : null;
+};

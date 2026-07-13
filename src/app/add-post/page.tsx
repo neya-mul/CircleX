@@ -7,8 +7,11 @@ import { uploadImageToImgBB } from '@/lib/uploadToIamgeBB'
 import { toast } from 'react-toastify'
 import { Camera } from 'lucide-react'
 import { FaCamera } from 'react-icons/fa'
+import { getToken } from '@/lib/generateToken'
 
 export default function AddPost() {
+
+
     const { data: session } = useSession()
     const user = session?.user
 
@@ -20,6 +23,9 @@ export default function AddPost() {
     const [contentImage, setContentImage] = useState<string>('')
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [isUploading, setIsUploading] = useState<boolean>(false)
+    // const [token, setToken] = useState<string>('')
+
+
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -43,6 +49,8 @@ export default function AddPost() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
+
+        const token = await getToken()
         // 📝 ভ্যালিডেশনে টোস্ট নোটিফিকেশন যুক্ত করা হলো
         if (!user) {
             toast.warn('Please log in first to create a post!')
@@ -73,7 +81,10 @@ export default function AddPost() {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/add-post`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(postData),
             })
 
