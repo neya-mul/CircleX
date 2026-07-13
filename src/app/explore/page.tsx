@@ -4,12 +4,9 @@ import Pagination from '@/components/Pagination'
 import { getAllPosts } from '@/lib/allData/all-posts'
 import React from 'react'
 
-
 interface ExploreProps {
   searchParams: Promise<{ search?: string; category?: string; page?: string; sortBy?: string }>
 }
-
-
 
 export default async function Explore({ searchParams }: ExploreProps) {
   const { search = '', category = 'all', page = '1', sortBy = 'newest' } = await searchParams
@@ -21,6 +18,7 @@ export default async function Explore({ searchParams }: ExploreProps) {
     limit: 8,
     sortBy,
   })
+
   if (!data || !Array.isArray(data.posts)) {
     return <div className="p-4 text-red-500 text-center">Failed to load posts.</div>
   }
@@ -29,7 +27,6 @@ export default async function Explore({ searchParams }: ExploreProps) {
 
   return (
     <div className="mx-auto p-6 min-h-screen">
-
       <ExploreFilters />
 
       {/* পোস্ট গ্রিড লেআউট */}
@@ -51,7 +48,6 @@ export default async function Explore({ searchParams }: ExploreProps) {
         search={search}
         category={category}
       />
-
     </div>
   )
 }

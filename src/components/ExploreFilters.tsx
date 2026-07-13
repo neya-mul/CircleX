@@ -18,10 +18,18 @@ export default function ExploreFilters() {
   const [isPending, startTransition] = useTransition()
 
   const [searchInput, setSearchInput] = useState(searchParams.get('search') || '')
+  
+  const activeCategory = searchParams.get('category') || 'all'
+  const activeSortBy = searchParams.get('sortBy') || 'newest'
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      updateParams({ search: searchInput, page: '1' })
+      updateParams({ 
+        search: searchInput, 
+        page: '1',
+        category: searchParams.get('category') || 'all',
+        sortBy: searchParams.get('sortBy') || 'newest'
+      })
     }, 400)
 
     return () => clearTimeout(timeout)
@@ -32,7 +40,6 @@ export default function ExploreFilters() {
     const params = new URLSearchParams(searchParams.toString())
 
     Object.entries(updates).forEach(([key, value]) => {
-      // ⚠️ 'newest' কে ডিফল্ট ধরা হয়েছে, তাই সেটাকে URL-এ না রেখে বাদ দেওয়া হচ্ছে (cleaner URLs)
       if (value && value !== 'all' && value !== '' && value !== 'newest') {
         params.set(key, value)
       } else {
@@ -46,23 +53,32 @@ export default function ExploreFilters() {
   }
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateParams({ category: e.target.value, page: '1' })
+    updateParams({ 
+      category: e.target.value, 
+      page: '1',
+      search: searchParams.get('search') || '',
+      sortBy: searchParams.get('sortBy') || 'newest'
+    })
   }
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateParams({ sortBy: e.target.value, page: '1' })
+    updateParams({ 
+      sortBy: e.target.value, 
+      page: '1',
+      search: searchParams.get('search') || '',
+      category: searchParams.get('category') || 'all'
+    })
   }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 items-center border-b border-gray-800 pb-5 mb-8 gap-4">
-
       {/* টাইটেল — বাম পাশে */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-white">Explore Feed</h1>
         <p className="text-sm text-gray-400 mt-1">Discover trending updates across platforms</p>
       </div>
 
-      {/* 🔍 সার্চ ইনপুট — মাঝখানে, বড় সাইজে */}
+      {/* 🔍 সার্চ ইনপুট — মাঝখানে */}
       <div className="relative w-full lg:max-w-md lg:mx-auto">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +104,7 @@ export default function ExploreFilters() {
         )}
       </div>
 
-      {/* ড্রপডাউন মেনুসমূহ — ডান পাশে, ক্যাটাগরি ও সর্ট একসাথে */}
+      {/* ড্রপডাউন মেনুসমূহ — ডান পাশে */}
       <div className="flex items-center gap-3 lg:justify-end flex-wrap">
         <div className="flex items-center gap-2">
           <label htmlFor="category" className="text-sm font-medium text-gray-400 whitespace-nowrap">
@@ -96,7 +112,7 @@ export default function ExploreFilters() {
           </label>
           <select
             id="category"
-            defaultValue={searchParams.get('category') || 'all'}
+            value={activeCategory}
             onChange={handleCategoryChange}
             className="bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
           >
@@ -114,7 +130,7 @@ export default function ExploreFilters() {
           </label>
           <select
             id="sortBy"
-            defaultValue={searchParams.get('sortBy') || 'newest'}
+            value={activeSortBy}
             onChange={handleSortChange}
             className="bg-gray-800 text-white border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
           >
@@ -126,7 +142,6 @@ export default function ExploreFilters() {
           </select>
         </div>
       </div>
-
     </div>
   )
 }
