@@ -5,6 +5,7 @@ import { Heart, MessageSquare, Share2, Bookmark, Flame, CheckCircle, Code } from
 import { motion, Variants } from "framer-motion";
 import { getAllPosts } from "@/lib/allData/all-posts";
 import PostCard from "@/components/PostCard";
+import Link from "next/link";
 
 export default function TrendingGrid() {
   const [posts, setPosts] = useState<any[]>([])
@@ -44,7 +45,7 @@ export default function TrendingGrid() {
           </div>
           <h2 className="text-xl font-extrabold text-white tracking-tight">Trending Feed</h2>
         </div>
-        <span className="text-xs font-semibold text-[#7c7fff] hover:underline cursor-pointer">View All</span>
+        <Link href={'/explore'}><span className="text-xs font-semibold text-[#7c7fff] hover:underline cursor-pointer">View All</span></Link>
       </div>
 
       {/* গ্রিড লেআউট */}
