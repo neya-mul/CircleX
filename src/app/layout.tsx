@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "CircleX || Share your thought",
-  // icons: {
-  //   icon: "/logo.png",
-  // },
+  icons: {
+    icon: "/Images/icon.png",
+  },
 };
 
 export default function RootLayout({

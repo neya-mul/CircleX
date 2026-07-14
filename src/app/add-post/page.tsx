@@ -70,8 +70,13 @@ export default function AddPost() {
         const postData = {
             title,
             authorName: user?.name,
-            authorEmail: user?.email, // 👈 এটি অবশ্যই যোগ করবেন যাতে ManagePosts ফিল্টার করতে পারে
-            avatar: user?.image || 'https://api.dicebear.com/7.x/avataaars/svg',
+            authorEmail: user?.email,
+            avatar: user?.image || user?.name
+                ?.split(" ")
+                .map((word) => word[0])
+                .slice(0, 2)
+                .join("")
+                .toUpperCase() || "A",
             category,
             content,
             contentImage,
@@ -90,7 +95,6 @@ export default function AddPost() {
 
             if (!response.ok) throw new Error('Failed to create post')
 
-            // 🎉 সাকসেস টোস্ট
             toast.success('Post created successfully! ')
 
             // ফর্ম রিসেট
