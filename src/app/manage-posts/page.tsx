@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 import Link from 'next/link'
 import { uploadImageToImgBB } from '@/lib/uploadToIamgeBB'
 import { FaCamera, FaHeart, FaTrash } from 'react-icons/fa'
+import { getToken } from '@/lib/generateToken'
 
 interface Post {
   _id: string
@@ -41,10 +42,15 @@ export default function ManagePosts() {
 
   // 🔄 ডাটা ফেচ করা
   const fetchUserPosts = async () => {
+    const token = await getToken()
     if (!user?.email) return
     try {
       setIsLoading(true)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/my-posts?email=${user.email}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/my-posts?email=${user.email}`, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      })
       if (!response.ok) throw new Error('Failed to fetch posts')
       const data = await response.json()
       setPosts(data)
@@ -73,9 +79,9 @@ export default function ManagePosts() {
         method: 'DELETE',
       })
       if (!response.ok) throw new Error('Failed to delete')
-      
+
       setPosts((prev) => prev.filter((p) => p._id !== selectedPost._id))
-      toast.success(`Post deleted successfully! ${<FaTrash />}`)
+      toast.success(`Post deleted successfully! `)
     } catch (error) {
       console.error(error)
       toast.error("Could not delete the post.")
@@ -136,7 +142,7 @@ export default function ManagePosts() {
       })
 
       if (!response.ok) throw new Error('Failed to update')
-      
+
       toast.success("Post updated successfully! ")
       setIsEditModalOpen(false)
       fetchUserPosts() // রিফ্রেশ ডাটা
@@ -155,7 +161,7 @@ export default function ManagePosts() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 pt-16 relative">
       <div className="max-w-5xl mx-auto space-y-6">
-        
+
         {/* হেডার */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-900 pb-5">
           <div>
