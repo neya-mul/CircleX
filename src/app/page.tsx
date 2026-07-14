@@ -4,6 +4,7 @@ import TagMarquee from "@/layers/MarqueeCom";
 import TrendingCreators from "@/layers/TrendingCreators";
 import TrendingGrid from "@/layers/TrendingPosts";
 import WhyCircleX from "@/layers/WhyCircleX";
+import WhyShareIdea from "@/layers/WhyShareIdea";
 import Image from "next/image";
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
       <TagMarquee></TagMarquee>
 
       <TrendingGrid></TrendingGrid>
+      <WhyShareIdea></WhyShareIdea>
       <TrendingCreators></TrendingCreators>
       <WhyCircleX></WhyCircleX>
       <Footer></Footer>

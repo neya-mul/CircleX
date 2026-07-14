@@ -36,7 +36,7 @@ function CreatorCard({ creator }: { creator: (typeof creators)[number] }) {
         <div>
           <h3 className="text-base font-semibold text-white">{creator.name}</h3>
           <p className="text-xs text-blue-400 mt-0.5">{creator.category}</p>
-          <p className="text-xs text-slate-500 mt-1">{creator.followers} followers</p>
+          {/* <p className="text-xs text-slate-500 mt-1">{creator.followers} followers</p> */}
         </div>
       </div>
     </div>

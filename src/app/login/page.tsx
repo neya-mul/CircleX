@@ -4,35 +4,45 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, Loader2, ArrowRight, Sparkles, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Loader2, ArrowRight, Sparkles, AlertCircle, Eye, EyeOff, Zap } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+
+// 🧪 Demo credentials — make sure this account exists in your DB
+const DEMO_CREDENTIALS = {
+  email: "demo@circlex.com",
+  password: "Demo@1234",
+};
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  // 🔐 Shared sign-in logic so both the form and the demo button use the same path
+  const signIn = async (email: string, password: string) => {
+    setErrorMsg("");
+    const { data, error } = await authClient.signIn.email({
+      email,
+      password,
+      callbackURL: "/",
+    });
+
+    if (error) {
+      throw new Error(error.message || "Invalid email or password");
+    }
+
+    router.push("/");
+    router.refresh();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg("");
-
     try {
-      // ⚡ Better-Auth সাইন-ইন মেথড কল করা
-      const { data, error } = await authClient.signIn.email({
-        email: formData.email,
-        password: formData.password,
-        callbackURL: "/", // সফল লগইন শেষে হোম পেজে রিডাইরেক্ট করবে
-      });
-
-      if (error) {
-        throw new Error(error.message || "Invalid email or password");
-      }
-
-      router.push("/");
-      router.refresh();
+      await signIn(formData.email, formData.password);
     } catch (err: any) {
       setErrorMsg(err.message || "An unexpected error occurred.");
     } finally {
@@ -40,9 +50,21 @@ export default function LoginPage() {
     }
   };
 
+  // ⚡ Demo login — fills the form AND logs in immediately
+  const handleDemoLogin = async () => {
+    setFormData(DEMO_CREDENTIALS);
+    setDemoLoading(true);
+    try {
+      await signIn(DEMO_CREDENTIALS.email, DEMO_CREDENTIALS.password);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Demo account is currently unavailable.");
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#06060e] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* 🌌 ব্যাকগ্রাউন্ড নিওন অরবিট গ্লো */}
       <div className="absolute w-[500px] h-[500px] bg-[#6366F1]/5 rounded-full blur-[150px] -top-20 -right-20 pointer-events-none"></div>
       <div className="absolute w-[400px] h-[400px] bg-[#5D3EBC]/10 rounded-full blur-[130px] -bottom-20 -left-20 pointer-events-none"></div>
 
@@ -52,7 +74,6 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-[#0b0c16]/80 backdrop-blur-md border border-[#161624] p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative z-10"
       >
-        {/* হেডার */}
         <div className="text-center space-y-2 mb-8">
           <div className="inline-flex items-center gap-1.5 bg-[#12112a] border border-[#5D3EBC]/30 px-3 py-1 rounded-full text-[10px] font-bold text-[#9295ff] tracking-wider uppercase mb-2">
             <Sparkles size={10} className="animate-pulse" /> Welcome Back
@@ -61,7 +82,6 @@ export default function LoginPage() {
           <p className="text-xs text-gray-400 font-light">Enter your credentials to access the tech node</p>
         </div>
 
-        {/* এরর মেসেজ ডিসপ্লে */}
         {errorMsg && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -73,9 +93,35 @@ export default function LoginPage() {
           </motion.div>
         )}
 
+        {/* ⚡ Demo Login Button */}
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          type="button"
+          onClick={handleDemoLogin}
+          disabled={demoLoading || loading}
+          className="w-full h-11 mb-5 bg-[#12112a] border border-[#5D3EBC]/40 hover:border-[#5D3EBC] text-[#9295ff] text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {demoLoading ? (
+            <>
+              <Loader2 size={14} className="animate-spin" />
+              Logging into demo...
+            </>
+          ) : (
+            <>
+              <Zap size={14} />
+              Try Demo Account
+            </>
+          )}
+        </motion.button>
+
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-px flex-1 bg-[#161624]" />
+          <span className="text-[10px] text-gray-500 uppercase tracking-wider">or sign in manually</span>
+          <div className="h-px flex-1 bg-[#161624]" />
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-5">
-          
-          {/* ✉️ ইমেইল ইনপুট */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Email Address</label>
             <div className="relative">
@@ -91,7 +137,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* 🔒 পাসওয়ার্ড ইনপুট */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Password</label>
@@ -109,7 +154,6 @@ export default function LoginPage() {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full bg-[#06060e] border border-[#161624] focus:border-[#5D3EBC] rounded-xl pl-10 pr-10 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors"
               />
-              {/* 👁️ পাসওয়ার্ড ভিজিবিলিটি টগল বাটন */}
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
@@ -122,7 +166,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* ⚡ সাবমিট বাটন */}
           <motion.button
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
@@ -144,7 +187,6 @@ export default function LoginPage() {
           </motion.button>
         </form>
 
-        {/* ফুটার ফুটনোট */}
         <p className="text-center text-xs text-gray-500 mt-6 font-medium">
           New to the grid?{" "}
           <Link href="/register" className="text-[#7c7fff] hover:underline font-bold">
