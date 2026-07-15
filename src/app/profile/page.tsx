@@ -35,42 +35,39 @@ export default function Profile() {
   }
 
   // 💾 প্রোফাইল আপডেট সাবমিট হ্যান্ডলার
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!editName.trim()) {
-      toast.warn("Name cannot be empty!")
-      return
-    }
-
-    setIsUpdating(true)
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/update-profile`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: user?.email,
-          name: editName
-        })
-      })
-
-      if (!response.ok) throw new Error('Failed to update profile')
-
-      const result = await response.json()
-      if (result.success) {
-        toast.success("Profile updated successfully! ")
-        setIsEditModalOpen(false)
-
-        // 🔄 সেশন ডাটা ইনস্ট্যান্ট রিফ্রেশ করার জন্য পেজ রিলোড বা auth সেশন রিলোড দিন
-        window.location.reload()
-      }
-    } catch (error) {
-      console.error(error)
-      toast.error("Could not update profile. Try again.")
-    } finally {
-      setIsUpdating(false)
-    }
+ const handleProfileUpdate = async (e: React.FormEvent) => {
+  e.preventDefault()
+  if (!editName.trim()) {
+    toast.warn("Name cannot be empty!")
+    return
   }
 
+  setIsUpdating(true)
+  try {
+    // 1. Update the actual auth user record (this is what useSession reads)
+    const { error } = await authClient.updateUser({
+      name: editName.trim(),
+    })
+    if (error) throw new Error(error.message)
+
+    // 2. Sync your app's denormalized data (posts authorName, etc.)
+    await fetch(`${process.env.NEXT_PUBLIC_URL}/update-profile`, {
+      method: 'PUT',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user?.email, name: editName.trim() }),
+    })
+
+    toast.success("Profile updated successfully!")
+    setIsEditModalOpen(false)
+    window.location.reload()
+  } catch (error) {
+    console.error(error)
+    toast.error("Could not update profile. Try again.")
+  } finally {
+    setIsUpdating(false)
+  }
+}
   if (!user) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-slate-400 text-sm space-y-4">

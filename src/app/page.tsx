@@ -1,3 +1,4 @@
+import BlogSection from "@/layers/Blog";
 import Footer from "@/layers/Footer";
 import HeroBanner from "@/layers/Hero";
 import TagMarquee from "@/layers/MarqueeCom";
@@ -17,6 +18,7 @@ export default function Home() {
       <WhyShareIdea></WhyShareIdea>
       <TrendingCreators></TrendingCreators>
       <WhyCircleX></WhyCircleX>
+      {/* <BlogSection></BlogSection> */}
       <Footer></Footer>
     </div>
   );

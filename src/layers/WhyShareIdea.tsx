@@ -27,7 +27,7 @@ export default function WhyShareIdea() {
     ]
 
     return (
-        <section className="bg-slate-950 text-slate-200 py-16 px-4 md:py-24 relative overflow-hidden">
+        <section className=" text-slate-200 py-16 px-4 md:py-24 relative overflow-hidden">
             {/* ব্যাকগ্রাউন্ড গ্লো ইফেক্ট */}
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
 

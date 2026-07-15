@@ -90,9 +90,9 @@ export default function TrendingCreators() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 mb-10">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-center">
         <h2 className="text-2xl font-semibold text-white tracking-wide">Trending Creators</h2>
-        <button className="text-sm font-medium text-blue-400 hover:text-blue-300">View All</button>
+        {/* <button className="text-sm font-medium text-blue-400 hover:text-blue-300">View All</button> */}
       </div>
 
       <div
